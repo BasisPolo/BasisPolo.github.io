@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				overflow: scroll;
+			}
+			div {
+				display: flex;
+            justify-content: center;
+            align-items: center;
+				min-width: 100vw;
+			}
+			table {
+				min-height: 100vh;
+				max-height: 100vh;
+				margin: 0;
+				padding: 0;
+				position: relative;
+				left: 0;
+				top: 0;
+				border-collapse: collapse;
+				border-spacing: 0;
+			}
+			tr {
+				max-width: 100vw;
+			}
+			td {
+				border: 1px solid black;
+				max-width: 32vw;
+				min-width: 32vw;
+				overflow: hidden;
+			}
+			@media print {
+				table {
+					page-break-after: always;
+				}
+			}
+			textarea {
+				position: fixed;
+				width: 50vw;
+				height: 50vh;
+				top: 25vh;
+				left: 25vw;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+				resize: none;
+        }
+
+        #submit {
+            margin-left: 25vw;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+			  	position: fixed;
+			  	top: 75vh;
+        }
+		</style>
+	</head>
+	<body>
+		<textarea id="text"></textarea><input id="submit" type="submit">
+		<script>
+			function makeTable(array) {
+				let newTable = document.createElement("table");
+				let newRow;
+				let newCell;
+				for (let i = 0; i < array.length; i++) {
+					newRow = document.createElement("tr");
+					newTable.appendChild(newRow);
+					for (let j = 0; j < array[i].length; j++) {
+						newCell = document.createElement("td");
+						newRow.appendChild(newCell);
+						newCell.innerHTML = array[i][j];
+					}
+				}
+				return newTable;
+			}
+			//myArray1 = [["Hello", "goodbye", 2], ["eat", 473]];
+			//document.body.appendChild(makeTable(myArray1));
+			function run() {
+				let text = document.getElementById("text").value;
+				let lines = text.split("\n");
+				while (lines.length % 3 != 0) {
+						lines.push(":");
+					}
+				let terms1 = [];
+				let definitions1 = [];
+				for (let i = 0; i < lines.length; i++) {
+					terms1.push(lines[i].split(":")[0]);
+					definitions1.push(lines[i].split(":")[1]);
+				}
+				let terms2 = [];
+				let definitions2 = [];
+				let numberOfRows;
+				numberOfRows = lines.length/3;
+				for (let i = 0; i < numberOfRows; i++) {
+					terms2.push([]);
+					definitions2.push([]);
+					for (let j = 0; j < 3; j++) {
+						if (3 * i + j < lines.length) {
+							terms2[terms2.length - 1].push(terms1[3 * i + j]);
+							definitions2[definitions2.length - 1].push(definitions1[3 * i + 2 - j]);
+						}
+					}
+				}
+				/*if (definitions2[definitions2.length - 1].length === 1) {
+					//alert();
+					definitions2[definitions2.length - 1].push(false);
+				}
+				if (definitions2[definitions2.length - 1].length === 2) {
+					//alert();
+					definitions2[definitions2.length - 1].push(definitions1[definitions1.length - 1])
+				}*/
+				document.body.innerHTML = "<div id=\"1\"></div><div id=\"2\"></div>";
+				let terms2TableElement = makeTable(terms2);
+				terms2TableElement.style.textAlign = "right";
+				document.getElementById("1").appendChild(terms2TableElement);
+				document.getElementById("2").appendChild(makeTable(definitions2));
+				for (let i = 0; i < document.getElementsByTagName("td").length; i++) {
+					document.getElementsByTagName("td")[i].style.maxHeight = 100 / numberOfRows + "vh";
+					document.getElementsByTagName("td")[i].style.maxHeight = 100 / numberOfRows + "vh";
+				}
+				print();
+			}
+			document.getElementById("submit").addEventListener("click", run);
+		</script>
+	</body>
+</html>
